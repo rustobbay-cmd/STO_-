@@ -11,7 +11,7 @@ db = Database(str(settings.database_file))
 
 
 def _is_admin(user_id: int) -> bool:
-    return user_id == settings.admin_id
+    return user_id in settings.admin_ids
 
 
 @router.message(F.text == "📋 План работ (Админ)")
