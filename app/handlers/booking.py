@@ -116,20 +116,22 @@ async def finish_booking(message: Message, state: FSMContext) -> None:
     )
     await message.answer(
         f"✅ Записано!\n{data['service']} — {data['date']} в {data['time']}",
-        reply_markup=main_keyboard(message.from_user.id == settings.admin_id),
+        reply_markup=main_keyboard(message.from_user.id in settings.admin_ids),
     )
-    await message.bot.send_message(
-        settings.admin_id,
-        (
-            "⚡️ Новая запись\n"
-            f"Услуга: {data['service']}\n"
-            f"Дата: {data['date']}\n"
-            f"Время: {data['time']}\n"
-            f"Авто: {data['car']}\n"
-            f"Клиент: {message.from_user.full_name}\n"
-            f"Телефон: {message.contact.phone_number}"
-        ),
+
+    notification_text = (
+        "⚡️ Новая запись\n"
+        f"Услуга: {data['service']}\n"
+        f"Дата: {data['date']}\n"
+        f"Время: {data['time']}\n"
+        f"Авто: {data['car']}\n"
+        f"Клиент: {message.from_user.full_name}\n"
+        f"Телефон: {message.contact.phone_number}"
     )
+
+    for admin_id in settings.admin_ids:
+        await message.bot.send_message(admin_id, notification_text)
+
     await state.clear()
 
 
