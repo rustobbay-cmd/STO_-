@@ -13,10 +13,13 @@ settings = get_settings()
 async def cmd_start(message: Message) -> None:
     await message.answer(
         "СТО Гараж приветствует вас! 🛠\nВыберите действие:",
-        reply_markup=main_keyboard(message.from_user.id == settings.admin_id),
+        reply_markup=main_keyboard(message.from_user.id in settings.admin_ids),
     )
 
 
 @router.message(F.text == "Отмена")
 async def cancel_action(message: Message) -> None:
-    await message.answer("Действие отменено.", reply_markup=main_keyboard(message.from_user.id == settings.admin_id))
+    await message.answer(
+        "Действие отменено.",
+        reply_markup=main_keyboard(message.from_user.id in settings.admin_ids),
+    )
