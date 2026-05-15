@@ -2,8 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import aiosqlite
+
+from app.config import get_settings
+
+
+settings = get_settings()
+booking_timezone = ZoneInfo(settings.timezone)
 
 
 @dataclass(slots=True)
@@ -110,7 +117,7 @@ class Database:
 
     async def has_free_slots(self, date_str: str, duration: int, start_hour: int, end_hour: int) -> bool:
         busy = await self.busy_slots(date_str)
-        now = datetime.now()
+        now = datetime.now(booking_timezone)
         current_hour = now.hour
         is_today = date_str == now.strftime("%d.%m")
 
@@ -129,7 +136,7 @@ class Database:
 
     async def available_times(self, date_str: str, duration: int, start_hour: int, end_hour: int) -> list[str]:
         busy = await self.busy_slots(date_str)
-        now = datetime.now()
+        now = datetime.now(booking_timezone)
         current_hour = now.hour
         is_today = date_str == now.strftime("%d.%m")
 
